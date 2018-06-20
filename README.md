@@ -11,6 +11,7 @@
 
 ```bash
 # 第一个请求获取vKey
+
 url: https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg
 params:
   g_tk: 5381
@@ -22,7 +23,7 @@ params:
 ```
 ![run icon](github/image/getvkey.png)
 
-####其中重要的几个参数：
+#### 其中重要的几个参数：   
 &emsp;&emsp;g_tk：全局固定值，推测是服务器用来区分不同业务范围的请求  
 &emsp;&emsp;cid：固定值，推测为客户端编号，用来区分不同平台的请求   
 &emsp;&emsp;songmid：歌曲编号   
@@ -44,24 +45,24 @@ params:
   ...
 ```
 ### 2、关于移动端无法自动播放，以及切换歌曲后歌曲声音延迟问题
-#####无法自动播放问题：
+#### 无法自动播放问题：    
 &emsp;&emsp;原因在与移动端，无论是微信、QQ或者其他浏览器为了避免手机资源的消耗都同时禁用了Html5.0中Audio/video自动播放的功能，所有的自动播放功能都需要用户手动触发。
 
-#####解决方法：   
+#### 解决方法：   
 &emsp;&emsp;开始时刻让播放器暂停，让用户手动触发一次播放
 
-#####切换歌曲后歌曲声音延迟问题:
+#### 切换歌曲后歌曲声音延迟问题:    
 &emsp;&emsp;原因在于在获取音频文件的工程中是异步的，并且通过两个请求才能获取到音频文件，在切换歌曲时，由于下个歌曲的音频文件Audio还未获取或者说准备就绪，Audio将会继续播放当前音频。   
 &emsp;&emsp;而且后期在调试过程中为了防止用户快速切换歌曲造成服务器压力，在歌曲获取时添加了延时执行。这使得歌曲切换过程中会有一段相当长的空白时间。   
 &emsp;&emsp;由于Vue里使用了Watch来监听音频文件的url的变化（由于首先需要获取vkey,将vkey组合成歌曲音频文件的URL），当歌曲url变化时Audio开始播放，即使在切换歌曲时先将Audio暂停播放，并不能解决问题
-#####解决方法:
+#### 解决方法:    
 &emsp;&emsp;预加载一段空白音频mute.mp3，当歌曲音频文件准备就绪时，开始播放歌曲
 
 
 ### 3、关于IOS下 animation-play-state动画属性 play pause无效
 &emsp;&emsp;原因应该是IOS系统的兼容问题，具体内容不清楚
 
-#####解决方法:   
+#### 解决方法:    
 &emsp;&emsp;使用tranform 属性手动进行状态叠加
 参考[ios下 animation-play-state不起作用](https://codepen.io/HaoyCn/pen/BZZrLd)  
 &emsp;&emsp;在编写过程中会发现transform属性利用cocat函数进行叠加的时候，在微信中发现无效，原因在于微信里transform的默认属性不再是none,而是martix(1,0,0,1,0,0)的字符串,而且浏览器也无法识别transform：martix(1,0,0,1,0,0) martix(1,0,0,1,0,0)形式的属性，因此问我们需要手动将两个Martix矩阵进行叠加。   
