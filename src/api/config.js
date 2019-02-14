@@ -21,4 +21,6 @@ export function getGuid() {
 }
 export const ERR_OK = 0;
 
+export const OK = 200;
+
 export const CID = 205361747;

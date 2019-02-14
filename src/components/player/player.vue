@@ -109,8 +109,8 @@
   import {mapGetters, mapActions, mapMutations} from 'vuex';
   import animations from 'create-keyframe-animation';
   import {prefixStyle, Matrix} from 'common/js/dom';
-  import {getSongVK} from 'api/song';
-  import {ERR_OK, getGuid} from 'api/config';
+  import {getSongVK, getSong} from 'api/song';
+  import {ERR_OK, OK, getGuid} from 'api/config';
   import ProgressBar from 'base/progress-bar/progress-bar';
   import ProgressCircle from 'base/progress-circle/progress-circle';
   import Lyric from 'lyric-parser';
@@ -134,7 +134,8 @@
         currentLineNum: 0,
         currentShow: 'cd',
         playingLyric: '',
-        isFirst: true
+        isFirst: true,
+        isVkey: true
       };
     },
     computed: {
@@ -440,11 +441,22 @@
           getSongVK(this.currentSong.mid, guid).then((res) => {
             if (res.code === ERR_OK) {
               this.itemSong = res.data.items[0];
-              if (this.itemSong.vkey) {
+              if (this.itemSong.vkey && this.itemSong.vkey !== '') {
                 this.songUrl = `http://dl.stream.qqmusic.qq.com/${this.itemSong.filename}?vkey=${this.itemSong.vkey}&guid=${guid}&fromtag=38`;
                 this.$refs.audio.src = this.songUrl;
                 this.songReady = true;
+              } else {
+                this.isVkey = false;
               }
+            }
+            if (!this.isVkey) {
+              getSong(this.currentSong.mid).then((res) => {
+                if (res.code === OK) {
+                  this.songUrl = res.data.url;
+                  this.$refs.audio.src = this.songUrl;
+                  this.songReady = true;
+                }
+              });
             }
           });
         }

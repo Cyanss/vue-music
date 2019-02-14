@@ -23,6 +23,20 @@ export function getSongVK (mid, Guid) {
     return Promise.resolve(res.data);
   });
 }
+
+export function getSong(mid) {
+  const url = 'https://api.bzqll.com/music/tencent/song';
+  const data = Object.assign({}, {
+    key: 579621905,
+    id:	mid
+  });
+
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data);
+  });
+}
 export function getLyric(mid) {
   const url = '/api/getLyric';
 

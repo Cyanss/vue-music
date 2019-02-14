@@ -9,7 +9,13 @@
 </template>
 
 <script type="text/ecmascript-6">
-  export default{};
+  export default{
+    methods: {
+      toggleScreenFull() {
+        this.$emit('screenFull');
+      }
+    }
+  };
 </script>
 
 <style scoped lang="stylus" type="text/stylus" rel="stylesheet/stylus">

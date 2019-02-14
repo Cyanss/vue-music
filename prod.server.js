@@ -9,7 +9,7 @@ var app = express();
 var apiRoutes = express.Router();
 
 apiRoutes.get('/getDiscList', function (req, res) {
-  var url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+  var url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg';
   axios.get(url, {
     headers: {
       referer: 'https://y.qq.com/portal/playlist.html',
@@ -17,14 +17,14 @@ apiRoutes.get('/getDiscList', function (req, res) {
     },
     params: req.query
   }).then((response) => {
-    res.json(response.data)
+    res.json(response.data);
   }).catch((e) => {
-    console.log(e)
-  })
+    console.log(e);
+  });
 });
 
 apiRoutes.get('/getSongVK', function (req, res) {
-  var url = 'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
+  var url = 'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg';
   axios.get(url, {
     headers: {
       referer: 'https://y.qq.com/portal/playlist.html',
@@ -32,10 +32,10 @@ apiRoutes.get('/getSongVK', function (req, res) {
     },
     params: req.query
   }).then((response) => {
-    res.json(response.data)
+    res.json(response.data);
   }).catch((e) => {
-    console.log(e)
-  })
+    console.log(e);
+  });
 });
 
 apiRoutes.get('/getSongList', function (req, res) {
@@ -48,14 +48,14 @@ apiRoutes.get('/getSongList', function (req, res) {
     },
     params: req.query
   }).then((response) => {
-    res.json(response.data)
+    res.json(response.data);
   }).catch((e) => {
-    console.log(e)
-  })
+    console.log(e);
+  });
 });
 
 apiRoutes.get('/getLyric', function (req, res) {
-  var url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+  var url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg';
   axios.get(url, {
     headers: {
       referer: 'https://y.qq.com/portal/player.html',
@@ -63,18 +63,18 @@ apiRoutes.get('/getLyric', function (req, res) {
     },
     params: req.query
   }).then((response) => {
-    var ret = response.data
+    var ret = response.data;
     if (typeof  ret === 'string') {
-      var reg = /^\w+\(({[^()]+})\)$/
-      var matches = ret.match(reg)
+      var reg = /^\w+\(({[^()]+})\)$/;
+      var matches = ret.match(reg);
       if (matches) {
-        ret =JSON.parse(matches[1]);
+        ret = JSON.parse(matches[1]);
       }
     }
-    res.json(ret)
+    res.json(ret);
   }).catch((e) => {
-    console.log(e)
-  })
+    console.log(e);
+  });
 });
 
 app.use('/api', apiRoutes);

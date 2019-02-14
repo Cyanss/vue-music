@@ -44,6 +44,17 @@ export function createSong(musicData) {
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`
   });
 }
+export function setSong(data) {
+  return new Song({
+    id: data.id,
+    mid: data.id,
+    singer: data.singer,
+    name: data.name,
+    album: '',
+    duration: data.time,
+    image: data.pic
+  });
+}
 function filterSinger(singer) {
   let ret = [];
   if (!singer) {

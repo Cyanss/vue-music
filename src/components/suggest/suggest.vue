@@ -25,12 +25,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {search} from 'api/search';
-  import {ERR_OK} from 'api/config';
-  import {createSong} from 'common/js/song';
+  import {searchSong} from 'api/search';
+   import {OK} from 'api/config';
+  import {setSong} from 'common/js/song';
   import Scroll from 'base/scroll/scroll';
   import Loading from 'base/loading/loading';
-  import Singer from 'common/js/singer';
+  // import Singer from 'common/js/singer';
   import {mapMutations, mapActions} from 'vuex';
   import NoResult from 'base/no-result/no-result';
 
@@ -48,8 +48,10 @@
       }
     },
     watch: {
-      query() {
-        this._search();
+      query(newquery) {
+        if (newquery !== '') {
+          this._search();
+        }
       }
     },
     data() {
@@ -58,7 +60,9 @@
         result: [],
         pullup: true,
         hasMore: true,
-        beforeScroll: true
+        beforeScroll: true,
+        type: ['song', 'album', 'list', 'mv', 'user', 'lrc'],
+        defaultType: 'song'
       };
     },
     methods: {
@@ -66,26 +70,34 @@
         this.page = 1;
         this.hasMore = true;
         this.$refs.suggest.scrollTo(0, 0);
-        search(this.query, this.page, this.showSinger, perpage).then((res) => {
-          if (res.code === ERR_OK) {
-            this.result = this._genResult(res.data);
-            this._checkMore(res.data);
+        // search(this.query, this.page, this.showSinger, perpage).then((res) => {
+        //  if (res.code === ERR_OK) {
+        //    this.result = this._genResult(res.data);
+        //    this._checkMore(res.data);
+        //  }
+        // });
+        searchSong(this.query, this.page, perpage, this.type[0]).then((res) => {
+          if (res.code === OK) {
+             this.result = this._genResult(res.data);
+             this._checkMore(res.data);
           }
         });
       },
       selectItem(item) {
-        if (item.type === TYPE_SINGER) {
-          const singer = new Singer({
-            id: item.singermid,
-            name: item.singername
-          });
-          this.$router.push({
-            path: `/search/${singer.id}`
-          });
-          this.setSinger(singer);
-        } else {
-          this.insertSong(item);
-        }
+        // if (item.type === TYPE_SINGER) {
+        //  const singer = new Singer({
+        //    id: item.singermid,
+        //    name: item.singername
+        //  });
+        //  this.$router.push({
+        //    path: `/search/${singer.id}`
+        //  });
+        //  this.setSinger(singer);
+        // } else {
+        //  this.insertSong(item);
+        // }
+        // this.$emit('select', item);
+        this.insertSong(item);
         this.$emit('select', item);
       },
       refresh() {
@@ -99,48 +111,67 @@
           return;
         }
         this.page++;
-        search(this.query, this.page, this.showSinger, perpage).then((res) => {
-          if (res.code === ERR_OK) {
+        // search(this.query, this.page, this.showSinger, perpage).then((res) => {
+        //  if (res.code === ERR_OK) {
+        //    console.log(this.result);
+        //    this.result = this.result.concat(this._genResult(res.data));
+        //    this._checkMore(res.data);
+        //  }
+        // });
+        searchSong(this.query, this.page, perpage, this.type[0]).then((res) => {
+          if (res.code === OK) {
             this.result = this.result.concat(this._genResult(res.data));
             this._checkMore(res.data);
           }
         });
       },
-      _checkMore(data) {
-        const song = data.song;
-        if (!song.list.length || (song.curnum + song.curpage * perpage) >= song.totalnum) {
-          this.hasMore = false;
-        }
-      },
+       _checkMore(data) {
+        // const song = data.song;
+        // if (!song.list.length || (song.curnum + song.curpage * perpage) >= song.totalnum) {
+        //  this.hasMore = false;
+        // }
+         const song = data;
+         if (!song.length || song.length < perpage) {
+           this.hasMore = false;
+         }
+         console.log(this.hasMore);
+       },
       getDisplayName(item) {
         if (item.type === TYPE_SINGER) {
-          return item.singername;
+          return item.singer;
         } else {
           return `${item.name}-${item.singer}`;
         }
       },
       getIconCls(item) {
-        if (item.type === TYPE_SINGER) {
-          return 'icon-mine';
-        } else {
-          return 'icon-music';
-        }
+        // if (item.type === TYPE_SINGER) {
+        //  return 'icon-mine';
+        // } else {
+        //  return 'icon-music';
+        // }
+        return 'icon-music';
       },
       _genResult(data) {
         let ret = [];
-        if (data.zhida && data.zhida.singerid && this.page === 1) {
-          ret.push({...data.zhida, ...{type: TYPE_SINGER}});
-        }
-        if (data.song) {
-          ret = ret.concat(this._normalizeSongs(data.song.list));
-        }
+        // if (data.zhida && data.zhida.singerid && this.page === 1) {
+        //  ret.push({...data.zhida, ...{type: TYPE_SINGER}});
+        // }
+        // if (data.song) {
+        //  ret = ret.concat(this._normalizeSongs(data.song.list));
+        // }
+        // if (data.zhida && data.zhida.singerid && this.page === 1) {
+        //  ret.push({...data.zhida, ...{type: TYPE_SINGER}});
+        // }
+         if (data) {
+          ret = ret.concat(this._normalizeSongs(data));
+         }
         return ret;
       },
       _normalizeSongs(list) {
         let ret = [];
         list.forEach((musicData) => {
-          if (musicData.songid && musicData.albumid) {
-            ret.push(createSong(musicData));
+          if (musicData.id) {
+            ret.push(setSong(musicData));
           }
         });
         return ret;
