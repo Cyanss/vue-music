@@ -166,6 +166,14 @@ npm run build
 # 运行模拟服务器
 node prod.server.js
 ```
+#### 后续BUG修复: 
+&emsp;&emsp;搜索页面中发现以前的歌曲搜索接口被屏蔽掉了，以及部分歌曲无法获取音频文件播放的Bug,笔者尝试更换了相关接口，以及音频无法播放的相关文件，只是经过了简单测试，目前未发现新的问题，但是由于相关优化还未做完，以及Webpack-service组件低版本中存在的安全漏洞问题没有找到合适的解决方案，修复后的代码上传到了分支里，需要的朋友可以通过以下方式产看更改的文件
+
+1、点击[branches](https://github.com/Cyanss/vue-music/branches)
+![run icon](github/image/branches.png)
+2、点击[Compore](https://github.com/Cyanss/vue-music/compare/%E6%90%9C%E7%B4%A2%E6%8E%A5%E5%8F%A3%E4%BF%AE%E6%94%B9)
+![run icon](github/image/compare.png)
+
 [模拟服务器](PACKAGE_CONFIG.md)  
 [vuex](https://vuex.vuejs.org)  
 [fastclick](https://github.com/ftlabs/fastclick)  
